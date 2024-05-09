@@ -1,9 +1,24 @@
 <script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import HelloWorld from './components/HelloWorld.vue'
 
 </script>
 
 <template>
-  <h1>hello world</h1>
+  <header>
+    <div class="wrapper">
+      <HelloWorld msg="I did it" />
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/products">Products</RouterLink>
+        <RouterLink to="/shopping-cart">Shopping Cart</RouterLink>
+        <RouterLink to="/about">About us</RouterLink>
+        <RouterLink to="/contact">Contact us</RouterLink>
+      </nav>
+    </div>
+  </header>
+  
+  <RouterView />
 </template>
 
 <style scoped>
