@@ -1,15 +1,9 @@
-<script setup> 
-    import { products } from '../temp-data'
-</script> 
+<script setup>
+import { products } from '../temp-data'
+import ProductsList from '@/components/ProductsList.vue'
+</script>
 
-<template> 
-    <h1>Products Page</h1> 
-    <div class="grid-wrap">
-        <div class="product-item" v-for="product in products" :key="product.id">
-            <img :src="product.imageName" />
-            <h3 class="product-name"> {{ product.name }}</h3>
-            <p class="product-price">{{ product.price }}</p>
-            <button>View Details</button>
-        </div>
-    </div>
+<template>
+  <h1>Products Page</h1>
+  <ProductsList :products="products" />
 </template>
