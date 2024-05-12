@@ -7,6 +7,11 @@ let products = productsRaw;
 const app = express(); 
 app.use(express.json());
 
+/* helper function */
+function populateCartIds(ids) {
+    return ids.map(id => products.find(product => product.id === id));
+}
+
 app.get('/hello', (req, res) => {
     res.send('Hello!');
 })
@@ -20,7 +25,8 @@ app.get('/products', (req, res) => {
 })
 
 app.get('/shopping-cart', (req, res) => {
-    res.json(cartItems);
+    const populatedCart = populateCartIds(cartItems);
+    res.json(populatedCart);
 })
 
 app.get('/products/:productId', (req, res) => {
@@ -29,17 +35,19 @@ app.get('/products/:productId', (req, res) => {
     res.json(prodcut);
 })
 
+
 app.post('/shopping-cart', (req, res) => {
     const productId = req.body.id; 
-    const prodcut = products.find(product => product.id === productId);
-    cartItems.push(prodcut); 
-    res.json(cartItems);
+    cartItems.push(productId);
+    const populatedCart = populateCartIds(cartItems);
+    res.json(populatedCart);
 })
 
 app.delete('/shopping-cart/:productId', (req, res) => {
     const productId = req.params.id; 
-    cartItems = cartItems.filter(product => product.id !== productId); 
-    res.json(cartItems);
+    cartItems = cartItems.filter(id => id !== productId); 
+    const populatedCart = populateCartIds(cartItems);
+    res.json(populatedCart);
 })
 
 app.listen(8000,  () => {
