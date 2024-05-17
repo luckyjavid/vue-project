@@ -47,17 +47,29 @@ async function start() {
         res.json(prodcut);
     })
 
-    app.post('/shopping-cart', (req, res) => {
+    app.post('/users/:userId/shopping-cart', async(req, res) => {
+        const userId = req.params.userId; 
         const productId = req.body.id; 
-        cartItems.push(productId);
-        const populatedCart = populateCartIds(cartItems);
+
+        await db.collection('users').updateOne({ id: userId}, {
+            $addToSet: { cartItems: productId } // addToSet: add productId to cartItems without duplicate
+        });
+
+        const user = await db.collection('users').findOne({id: req.params.userId}); 
+        const populatedCart = await populateCartIds(user.cartItems);
         res.json(populatedCart);
     })
 
-    app.delete('/shopping-cart/:productId', (req, res) => {
-        const productId = req.params.id; 
-        cartItems = cartItems.filter(id => id !== productId); 
-        const populatedCart = populateCartIds(cartItems);
+    app.delete('/users/:userId/shopping-cart/:productId', async (req, res) => {
+        const userId = req.params.userId; 
+        const productId = req.params.productId; 
+
+        await db.collection('users').updateOne({ id: userId}, {
+            $pull: { cartItems: productId } // pull: remove productId from cartItems without duplicate
+        });
+
+        const user = await db.collection('users').findOne({id: req.params.userId}); 
+        const populatedCart = await populateCartIds(user.cartItems);
         res.json(populatedCart);
     })
 
