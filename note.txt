@@ -1,0 +1,9 @@
+To run back-end server: 
+-----------------------
+go to d:/vue/projects/back-end 
+type in: npm run dev
+
+
+To run front-end server: 
+------------------------
+npm run dev

@@ -1,10 +1,8 @@
 import express from 'express'; 
-import { cartItems as cartItemsRaw , products as productsRaw } from './temp-data'
-import { MongoClient } from 'mongodb'
+import { MongoClient } from 'mongodb';
+const path = require('path'); 
 require('dotenv').config();
 
-let cartItems = cartItemsRaw; 
-let products = productsRaw; 
 
 async function start() {
     // connect to mongo db
@@ -17,6 +15,8 @@ async function start() {
     const app = express();  
     app.use(express.json());
 
+    /* serve images statically to front-end */
+    app.use('/images', express.static(path.join(__dirname, '../assets/images')));
     /* helper function */
     async function populateCartIds(ids) { 
         return Promise.all(ids.map( id => db.collection('products').findOne({ id }) ));
@@ -30,12 +30,12 @@ async function start() {
         res.send('Ciao!');
     })
 
-    app.get('/products', async (req, res) => {
+    app.get('/api/products', async (req, res) => {
         const products = await db.collection('products').find({}).toArray(); 
         res.send(products);
     })
 
-    app.get('/users/:userId/shopping-cart', async (req, res) => {
+    app.get('/api/users/:userId/shopping-cart', async (req, res) => {
         const user = await db.collection('users').findOne({id: req.params.userId}); 
         const populatedCart = await populateCartIds(user.cartItems);
         res.json(populatedCart);
@@ -47,7 +47,7 @@ async function start() {
         res.json(prodcut);
     })
 
-    app.post('/users/:userId/shopping-cart', async(req, res) => {
+    app.post('/api/users/:userId/shopping-cart', async(req, res) => {
         const userId = req.params.userId; 
         const productId = req.body.id; 
 
@@ -60,7 +60,7 @@ async function start() {
         res.json(populatedCart);
     })
 
-    app.delete('/users/:userId/shopping-cart/:productId', async (req, res) => {
+    app.delete('/api/users/:userId/shopping-cart/:productId', async (req, res) => {
         const userId = req.params.userId; 
         const productId = req.params.productId; 
 
